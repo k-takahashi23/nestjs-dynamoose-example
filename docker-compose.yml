@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+ dynamodblocal:
+    image: amazon/dynamodb-local
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath . -optimizeDbBeforeStartup
+    volumes:
+      - dynamodb:/home/dynamodblocal/data
+    ports:
+      - "8000:8000"
+ dynamodbadmin:
+    image: instructure/dynamo-local-admin
+    ports:
+      - 8001:8001
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodblocal:8000
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+    depends_on:
+      - dynamodblocal
+     
+volumes:
+  dynamodb:
+    driver: local
